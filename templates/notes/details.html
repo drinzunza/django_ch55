@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    Note Details    
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/notes.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="note-details">
+        {% if note.image %}
+            <img class="main-img" src="{{note.image.url}}"/>
+        {% endif %}
+
+
+        <h3>{{note.title}}</h3>
+
+        <p>{{note.content}}</p>
+
+        <label class="date">Created: {{note.created_on}}</label>
+        <label class="date">Release: {{note.release_date}}</label>
+
+        <div class="controls">
+            <a class="btn btn-sm btn-outline-primary" href="">Edit Note</a>
+            <a class="btn btn-sm btn-outline-danger" href="">Delete Note</a>
+        </div>
+
+        <hr/>
+        <h4>Comments</h4>
+
+        <div class="comments">
+            {% for item in comments %}
+                <div class="comment">
+                    <label class="author">{{item.author.username}}</label>
+                    <p>{{item.content}}</p>
+                    <label class="date">Created: {{item.created_on}}</label>
+                </div>
+            {% endfor %}
+
+            <!-- form to create new comments -->
+             {% if user.is_authenticated %}
+                <div class="comment">
+                    <form method="POST" action="{% url 'save_comment' %}">
+                        {% csrf_token %}
+                        <label class="author">Create new comment</label>
+                        <input type="hidden" value="{{note.id}}" name="note_id">
+                        <textarea required name="content" rows="3" class="form-control"></textarea>
+                        <button class="btn btn-sm btn-outline-dark">Post Comment</button>
+                    </form>
+                </div>
+             {% endif %}
+        </div>
+    </div>
+{% endblock %}
